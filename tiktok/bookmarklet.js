@@ -4,4 +4,4 @@ javascript:
 let d = window['SIGI_STATE'].UserModule.users;
 let user = d[Object.keys(d)[0]];
 let ts = user.createTime;
-alert(ts+'\n'+new Date(parseInt(ts)));
+alert(ts+'\n'+new Date(parseInt(ts*1000)));
