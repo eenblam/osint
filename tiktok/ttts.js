@@ -1,6 +1,9 @@
-// Try to copy timestamp of current video to clipboard.
+// ttts.js - TikTok Time Stamp fetcher
+//
+// Attempts to copy timestamp of current video to clipboard.
 // Dumps extra info to browser console.
-// Alerts you if you need to refresh, and provides you with a URL you can paste instead.
+// Alerts if you haven't clicked a video.
+// Alerts if you need to refresh, and provides you with a URL you can paste instead.
 javascript:
 var parsedUrl = new URL(window.location.href);
 var params = parsedUrl.searchParams;
