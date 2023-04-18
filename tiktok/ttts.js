@@ -37,7 +37,6 @@ if (id in d.ItemModule) {
     authorCreateDate: authorCreateDate,
     createDate: createDate,
     createTime: createTime,
-    createDate: createDate,
     id: id,
     url: item.video.downloadAddr
   };
