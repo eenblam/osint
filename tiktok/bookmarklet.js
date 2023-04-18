@@ -1,36 +1,65 @@
-// Click video for details. Click basically anywhere in the frame containing the post.
-// The only obvious way (to me) to cross-reference a recommend-list-item-container
-// with an entry in ItemModules seems to be using the music ID and author to cross-reference.
-// Probably falls apart if you you have multiple posts from the same author with the same music
-// on one page. (Or, only grabs the first matching video per the order in ItemModules)
+// tiktok/bookmarklet.js - TikTok metadata fetcher
+//
+// Attempts to gather as much info about the current video and author
+// as possible from the current page.
+// Data is rendered as an alert, but also to the browser's javascript console.
+// Alerts with an error if you haven't clicked a video.
+// Alerts with an error if you need to refresh,
+// and provides you with a URL you can copy and paste just in case.
+// **This happens a lot.**
+// If you just clicked on a new video, you'll probably need to refresh before the bookmarklet works.
+//
+// Sometime author createtime is 0. I'm not sure what that means yet.
+// !!! Don't copy any lines in this file before "javascript:" !!!
 javascript:
-document.addEventListener('click', getVideoData);
-function getVideoData(event) {
-  let els = document.elementsFromPoint(event.clientX, event.clientY);
-  let post = els[0].closest(`div[data-e2e="recommend-list-item-container"]`);
+var parsedUrl = new URL(window.location.href);
+var params = parsedUrl.searchParams;
+var id;
+if (parsedUrl.pathname.includes('/video/')) {
+  let pathParts = parsedUrl.pathname.split('/');
+  id = pathParts[pathParts.length - 1];
+} else if (params.has("item_id")) {
+  id = params.get("item_id");
+} else {
+  alert ("Sorry, not sure which video you want.");
+  throw new Error("Sorry, not sure which video you want.");
+}
 
-  let author = post.querySelector(`a[data-e2e="video-author-avatar"]`).href;
-  let music = post.querySelector(`h4[data-e2e="video-music"] > a`).href;
-  let _ms = music.split('-');
-  let music_id = _ms[_ms.length - 1];
+var d = window['SIGI_STATE'];
+if (id in d.ItemModule) {
+  item = d.ItemModule[id];
+  let createTime = item.createTime;
+  let createDate = new Date(createTime * 1000);
 
-  d = window['SIGI_STATE'];
-  let _post_kv = Object.entries(d.ItemModule).filter(
-    ([k,v]) => v.author === author.split('@')[1] && v.music.id === music_id
-  )[0];
-  let post_id = _post_kv[0];
-  let post_data = _post_kv[1];
+  let author = item.author;
+  if (author in d.UserModule.users) {
+    var authorCreateTime = d.UserModule.users[author].createTime;
+    var authorCreateDate = new Date(authorCreateTime * 1000);
+  }
 
-  let uploadTimestamp = parseInt(post_data.createTime) * 1000;
-  let uploadDate = new Date(uploadTimestamp);
-  let videoURL = post_data.video.downloadAddr;
+  let text = `
+Author: ${author}\n
+Author ID: ${item.authorId}\n
+Author Create Time: ${authorCreateTime}\n
+Author Create Date: ${authorCreateDate}\n
+Video Create Date: ${createDate}\n
+Video Create Time: ${createTime}\n
+Video ID: ${id}\n
+Download URL:\n\n${item.video.downloadAddr}`;
 
+  alert(text);
   let data = {
     author: author,
-    uploadTimestamp: uploadTimestamp,
-    uploadDate: uploadDate,
-    videoURL: videoURL
+    authorId: item.authorId,
+    authorCreateTime: authorCreateTime,
+    authorCreateDate: authorCreateDate,
+    createDate: createDate,
+    createTime: createTime,
+    id: id,
+    url: item.video.downloadAddr
   };
-  navigator.clipboard.writeText(uploadTimestamp);
   console.log(data);
+} else {
+  let url = `https://www.tiktok.com/foryou?item_id=${id}`;
+  alert(`Timestamp for video ${id} not available on page.\nRefresh page or visit the URL below, then retry.\n\n${parsedUrl}`);
 }
