@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "TT Unlocked",
+  "description": "It gets some data from the page for you to copy.",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "default_icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting", "activeTab", "tabs"]
+}
