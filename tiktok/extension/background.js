@@ -1,8 +1,5 @@
 // background.js
 
-console.log('Hello from background.js!');
-
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(`background.js: got message ${JSON.stringify(request)}`);
   (async function () {
@@ -31,10 +28,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function getData() {
-  console.log("getData: I'M IN!");
-  console.log(window);
   var parsedUrl = new URL(window.location.href);
-  console.log(parsedUrl);
+  console.log(`background.js: parsed $(parsedUrl)`);
   var params = parsedUrl.searchParams;
   var id;
   if (parsedUrl.pathname.includes('/video/')) {

@@ -1,8 +1,6 @@
 // popup.js
 
-console.log('Hello from popup.js!');
-
-document.addEventListener("DOMContentLoaded", function(event) { 
+document.addEventListener("DOMContentLoaded", function(event) {
 
 // https://stackoverflow.com/a/60756477
 const errString = "Could not establish connection. Receiving end does not exist.";
@@ -14,7 +12,7 @@ chrome.tabs.query({active: true}, async (tabs) => {
     let tab = tabs[0];
     let tabId = tab.id;
     let tabUrl = tab.url
-    console.log(`tabs[0]: ${JSON.stringify(tabs[0])}`);
+    console.log(`popup.js: tabs[0]: ${JSON.stringify(tabs[0])}`);
 
     chrome.runtime.sendMessage({
             event: 'popup-ready',
@@ -39,16 +37,16 @@ chrome.tabs.query({active: true}, async (tabs) => {
             return;
         }
         // No runtime error, no app error
-        console.log(response);
+        console.log(`popup.js: response: $(response)`);
         data = response.result.data
         text = `Success: ${JSON.stringify(data)}`;
-        console.log(text);
+        console.log(`popup.js: $(text)`);
         const parent = document.getElementById("results-container");
         //TODO actually make this HTML. Probably want something less hacky later, but whatever.
         //parent.innerHTML = response.result.text.split("\n").join("<br/>");
         parent.innerHTML = response.result.html;
         } catch (err) {
-            console.log(err);
+            console.log(`popup.js: $(err)`);
             parent.innerText = "If you see this, try refreshing the page and trying again.";
         }
         });
